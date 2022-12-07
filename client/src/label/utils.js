@@ -113,19 +113,10 @@ export function exportLabelData(labelData, formParts) {
   return JSON.stringify(out);
 }
 
-export const shortcuts = '1234567890qwertasdfgzxcv';
+export const shortcuts = '1234567890qwertasdfgzxcvb';
 export const colors = [
-  'red',
-  'blue',
-  'green',
-  'violet',
-  'orange',
-  'brown',
-  'yellow',
-  'olive',
-  'teal',
-  'purple',
-  'pink',
+  'black',
+  'black',
   'black',
   'red',
   'blue',
@@ -138,5 +129,15 @@ export const colors = [
   'teal',
   'purple',
   'pink',
-  'black',
+  'red',
+  'blue',
+  'green',
+  'violet',
+  'orange',
+  'brown',
+  'yellow',
+  'olive',
+  'teal',
+  'purple',
+  'pink',
 ];
