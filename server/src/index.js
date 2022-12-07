@@ -96,6 +96,30 @@ app.get('/api/templateInfo', (req, res) => {
   }
 });
 
+app.delete('/api/templateInfo', checkLoginMiddleware, (req, res) => {
+  let { type, no, name } = req.query;
+  try {
+    const template = templates.get(type, no, name);
+    if( Object.keys(template).length === 0 ) {
+      res.json({
+        success: false,
+      });
+    }else {
+      templates.delete(template.id);
+      res.json({
+        success: true,
+      });
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(400);
+    res.json({
+      message: err.message,
+      code: 400,
+    });
+  }
+});
+
 app.delete('/api/projects/:id', checkLoginMiddleware, (req, res) => {
   projects.delete(req.params.id);
   res.json({ success: true });

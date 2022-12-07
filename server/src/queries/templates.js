@@ -99,16 +99,7 @@ update projects
       id
     );
   },
-  updateReference: (id, referenceLink) => {
-    db.prepare(
-      `
-update projects
-   set referenceLink = ?
- where id = ?;
-`
-    ).run(referenceLink, id);
-  },
   delete: id => {
-    db.prepare(`delete from projects where id=?;`).run(id);
+    db.prepare(`delete from templates where id=?;`).run(id);
   },
 };
