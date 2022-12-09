@@ -63,8 +63,8 @@ app.get('/api/templatesAll', checkLoginMiddleware, (req, res) => {
 });
 
 app.post('/api/templates', checkLoginMiddleware, (req, res) => {
-  const { bill_type, cus_no, cus_name, exportLabel } = req.body;
-  const template = templates.create(bill_type, cus_no, cus_name, exportLabel)
+  const { bill_type, cus_no, cus_name, exportLabel, img_id } = req.body;
+  const template = templates.create(bill_type, cus_no, cus_name, exportLabel, img_id)
   console.log(template);
   res.json({
     success: true,
@@ -94,6 +94,25 @@ app.get('/api/templateInfo', (req, res) => {
       code: 400,
     });
   }
+});
+
+app.post('/api/templateInfoList', (req, res) => {
+  const { img_list } = req.body;
+  let results = []
+  img_list.forEach( img => {
+    const template = templates.getImageInfo(img);
+    let result = {}
+    if( Object.keys(template).length === 0 ) {
+      result[img] = null
+    }else {
+      result[img] = template
+    }
+    results.push(result)
+  })
+  res.json({
+    success: true,
+    results: results
+  });
 });
 
 app.delete('/api/templateInfo', checkLoginMiddleware, (req, res) => {

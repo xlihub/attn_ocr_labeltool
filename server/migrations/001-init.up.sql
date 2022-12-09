@@ -24,7 +24,9 @@ create table Templates (
   Bill_Type text not null,
   Com_No text not null,
   Com_Name text not null,
-  labelData text not null /* JSON-stringified data, matching the form data in the project */
+  TemplateData text not null, /* JSON-stringified data, matching the form data in the project */
+  imagesId integer,
+  constraint templates_fk_imagesId foreign key (imagesId) references Images (id) on update cascade on delete no action
 );
 
 create table MLModels (

@@ -115,6 +115,7 @@ export default class LabelingLoader extends Component {
     })).json();
     console.log(img);
     if (img) {
+      const img_id = img.id;
       let labelData = img.labelData;
       console.log(labelData);
       var bill_type,
@@ -172,6 +173,7 @@ export default class LabelingLoader extends Component {
                   cus_no,
                   cus_name,
                   exportLabel,
+                  img_id,
                 }),
               }
             )).json();
