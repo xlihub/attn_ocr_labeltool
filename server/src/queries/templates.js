@@ -24,7 +24,6 @@ select templates.Bill_Type, templates.Com_No, templates.Com_Name, templates.Temp
         `
 select *
   from templates
-inner join images on templates.imagesId = images.id
  where Bill_Type = ? and Com_No = ?;
 `
       )
