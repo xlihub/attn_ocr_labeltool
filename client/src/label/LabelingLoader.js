@@ -126,7 +126,7 @@ export default class LabelingLoader extends Component {
       project.form.formParts.forEach(({ id, type, name, prompt }) => {
         const things = labelData.labels[id];
         console.log(things);
-        if (type === 'text') {
+        if (type === 'text' || type === 'select-one') {
           if (name === 'Bill_Type') {
             bill_type = things[0];
           }
