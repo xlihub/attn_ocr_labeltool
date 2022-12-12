@@ -23,12 +23,12 @@ export default class Menubar extends Component {
                 Admin
               </Menu.Item>
             </Link>
-            <Link to="/help/">
-              <Menu.Item active={active === 'help'}>
-                <Icon name="help circle" style={{ marginRight: '5px' }} />
-                Help
-              </Menu.Item>
-            </Link>
+            {/*<Link to="/help/">*/}
+            {/*  <Menu.Item active={active === 'help'}>*/}
+            {/*    <Icon name="help circle" style={{ marginRight: '5px' }} />*/}
+            {/*    Help*/}
+            {/*  </Menu.Item>*/}
+            {/*</Link>*/}
           </Container>
         </Menu>
 

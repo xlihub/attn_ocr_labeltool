@@ -36,7 +36,7 @@ function process(str, projectId) {
 
     if (labels.length !== 0){
       labels.forEach(item => {
-        const { label, type, prompt } = item;
+        const { label, type, prompt, options } = item;
         let labelId = null;
         if (formParts) {
           formParts.forEach(part => {
@@ -49,12 +49,22 @@ function process(str, projectId) {
         if (!labelId) {
           // add a label to the project def
           labelId = genId();
-          formParts.push({
-            id: labelId,
-            type: type,
-            name: label,
-            prompt: prompt
-          });
+          if (type === 'text') {
+            formParts.push({
+              id: labelId,
+              type: type,
+              name: label,
+              prompt: prompt
+            });
+          } else if (type === 'select-one') {
+            formParts.push({
+              id: labelId,
+              type: type,
+              name: label,
+              prompt: prompt,
+              options: options,
+            });
+          }
         }
       });
     }

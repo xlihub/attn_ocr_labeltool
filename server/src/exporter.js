@@ -15,7 +15,7 @@ exports.exportProject = projectId => {
       const shapes = [];
       const labels = [];
 
-      project.form.formParts.forEach(({ id, type, name, prompt }) => {
+      project.form.formParts.forEach(({ id, type, name, prompt, options }) => {
         if (labelData.labels == null || labelData.labels == undefined) {
           console.log("No labels found for: " + id);
           return;
@@ -54,12 +54,20 @@ exports.exportProject = projectId => {
               ),
             });
           });
-        } else {
+        } else if (type === 'text') {
           labels.push({
             label: name,
             type: type,
             values: things,
-            prompt: prompt
+            prompt: prompt,
+          });
+        } else if (type === 'select-one') {
+          labels.push({
+            label: name,
+            type: type,
+            values: things,
+            prompt: prompt,
+            options: options,
           });
         }
       });

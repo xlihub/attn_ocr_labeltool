@@ -55,7 +55,7 @@ export function exportLabelData(labelData, formParts) {
   const shapes = [];
   const labels = [];
 
-  formParts.forEach(({ id, type, name, prompt }) => {
+  formParts.forEach(({ id, type, name, prompt, options }) => {
     const things = labelData.labels[id];
     if (type === 'bbox' || type === 'polygon') {
       function transform(points) {
@@ -90,12 +90,20 @@ export function exportLabelData(labelData, formParts) {
           ),
         });
       });
-    } else {
+    } else if (type === 'text') {
       labels.push({
         label: name,
         type: type,
         values: things,
         prompt: prompt,
+      });
+    } else if (type === 'select-one') {
+      labels.push({
+        label: name,
+        type: type,
+        values: things,
+        prompt: prompt,
+        options: options,
       });
     }
   });
