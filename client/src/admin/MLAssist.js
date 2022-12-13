@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import {
   Header,
   Form,
@@ -8,13 +7,20 @@ import {
   Button,
   Loader,
 } from 'semantic-ui-react';
-
 const options = [
-  { value: 'object_detection', text: 'Object Detection' },
-  { value: 'object_classification', text: 'Object Classification' },
-  { value: 'semantic_segmentation', text: 'Semantic Segmentation' },
+  {
+    value: 'object_detection',
+    text: 'Object Detection',
+  },
+  {
+    value: 'object_classification',
+    text: 'Object Classification',
+  },
+  {
+    value: 'semantic_segmentation',
+    text: 'Semantic Segmentation',
+  },
 ];
-
 const inputFormat = `
 {
   "instances": [
@@ -26,7 +32,6 @@ const inputFormat = `
   ]
 }
 `;
-
 const outputFormats = {
   object_detection: `
 {
@@ -52,7 +57,6 @@ const outputFormats = {
 }
 `,
 };
-
 export default class MLAssist extends Component {
   constructor(props) {
     super(props);
@@ -64,15 +68,12 @@ export default class MLAssist extends Component {
       url: null,
       name: null,
     };
-
     this.onSubmit = this.onSubmit.bind(this);
     this.onDelete = this.onDelete.bind(this);
   }
-
   componentDidMount() {
     this.reload();
   }
-
   async reload() {
     try {
       const models = await (await fetch('/api/mlmodels/')).json();
@@ -88,11 +89,9 @@ export default class MLAssist extends Component {
       });
     }
   }
-
   async onSubmit(e) {
     e.preventDefault();
     const form = e.target;
-
     const type = this.state.currentValue;
     const { url, name } = this.state;
     await fetch('/api/mlmodels/', {
@@ -108,11 +107,9 @@ export default class MLAssist extends Component {
         },
       }),
     });
-
     form.reset();
     this.reload();
   }
-
   async onDelete(id) {
     await fetch('/api/mlmodels/' + id, {
       method: 'DELETE',
@@ -120,26 +117,26 @@ export default class MLAssist extends Component {
         'Content-Type': 'application/json',
       },
     });
-
     this.reload();
   }
-
   render() {
     const { error, isLoaded, models, currentValue } = this.state;
     const value = currentValue;
-
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <Loader active inline="centered" />;
     }
-
     const emptyMessage = models.length ? null : (
-      <div style={{ textAlign: 'center', padding: '3em' }}>
+      <div
+        style={{
+          textAlign: 'center',
+          padding: '3em',
+        }}
+      >
         No end-points, add one below
       </div>
     );
-
     return (
       <Segment>
         <Header as="h2">Available end-points</Header>
@@ -171,15 +168,25 @@ export default class MLAssist extends Component {
           </Table.Body>
         </Table>
         {emptyMessage}
-        <div style={{ marginTop: '2em' }}>
+        <div
+          style={{
+            marginTop: '2em',
+          }}
+        >
           <Header as="h2">Add a new end-point</Header>
-          <Form style={{ maxWidth: 600 }}>
+          <Form
+            style={{
+              maxWidth: 600,
+            }}
+          >
             <Form.Select
               label="Model type"
               options={options}
               value={value}
               onChange={(e, { value }) =>
-                this.setState({ currentValue: value })
+                this.setState({
+                  currentValue: value,
+                })
               }
             />
           </Form>
@@ -203,16 +210,29 @@ export default class MLAssist extends Component {
             </Table.Body>
           </Table>
 
-          <Form style={{ maxWidth: 600 }} onSubmit={this.onSubmit}>
+          <Form
+            style={{
+              maxWidth: 600,
+            }}
+            onSubmit={this.onSubmit}
+          >
             <Form.Input
               label="Display Name"
               placeholder="my_model"
-              onChange={(e, { value }) => this.setState({ name: value })}
+              onChange={(e, { value }) =>
+                this.setState({
+                  name: value,
+                })
+              }
             />
             <Form.Input
               label="URL"
               placeholder="http://host:port/v1/models/{MODEL_NAME}:predict"
-              onChange={(e, { value }) => this.setState({ url: value })}
+              onChange={(e, { value }) =>
+                this.setState({
+                  url: value,
+                })
+              }
             />
             <Button type="submit">Add</Button>
           </Form>

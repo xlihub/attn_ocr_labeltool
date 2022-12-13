@@ -5,20 +5,24 @@ export function computePath({ points, height, width, imageData, markRadius }) {
   function pointToId(x, y) {
     return (height - y) * (width * 4) + x * 4;
   }
-
   function idToPoint(id) {
     const x = (id % (width * 4)) / 4;
     const y = height - Math.floor(id / (width * 4));
-    return { x, y };
+    return {
+      x,
+      y,
+    };
   }
-
   const pointsSets = points.map(({ x, y }) => {
     x = Math.floor(x);
     y = Math.floor(y);
     const points = [];
     for (let dx = -markRadius; dx <= markRadius; dx++) {
       for (let dy = -markRadius; dy <= markRadius; dy++) {
-        const p = { x: x + dx, y: y + dy };
+        const p = {
+          x: x + dx,
+          y: y + dy,
+        };
         if (inBounds(p, height, width)) {
           points.push(p);
         }
@@ -26,17 +30,19 @@ export function computePath({ points, height, width, imageData, markRadius }) {
     }
     return points;
   });
-
   const idsSets = pointsSets.map(
     ps => new Set(ps.map(({ x, y }) => pointToId(x, y)))
   );
-
   let minPoint, maxPoint;
-
   function getPaths(startingSet, startingDistances, endSet) {
-    minPoint = { x: Infinity, y: Infinity };
-    maxPoint = { x: -Infinity, y: -Infinity };
-
+    minPoint = {
+      x: Infinity,
+      y: Infinity,
+    };
+    maxPoint = {
+      x: -Infinity,
+      y: -Infinity,
+    };
     for (const id of endSet) {
       const p = idToPoint(id);
       minPoint.x = Math.min(minPoint.x, p.x);
@@ -55,7 +61,6 @@ export function computePath({ points, height, width, imageData, markRadius }) {
     minPoint.y -= 3;
     maxPoint.x += 3;
     maxPoint.y += 3;
-
     function calcCost(a, b, c, d) {
       let sum = 0;
       for (let i = 0; i < 3; i++) {
@@ -66,12 +71,10 @@ export function computePath({ points, height, width, imageData, markRadius }) {
       }
       return sum;
     }
-
     const maxCost = 1000000;
     const distanceFn = (a, b) => {
       const pa = idToPoint(a);
       const pb = idToPoint(b);
-
       if (pa.x === pb.x) {
         const pl1 = pointToId(pa.x - 1, pa.y);
         const pl2 = pointToId(pa.x - 1, pb.y);
@@ -93,7 +96,6 @@ export function computePath({ points, height, width, imageData, markRadius }) {
         return maxCost - Math.floor(cost / 1.414);
       }
     };
-
     const neighborsFn = id => {
       const p = idToPoint(id);
       const points = [];
@@ -117,14 +119,11 @@ export function computePath({ points, height, width, imageData, markRadius }) {
         );
       return validPoints.map(p => pointToId(p.x, p.y));
     };
-
     return dijkstra(startingDistances, endSet, distanceFn, neighborsFn);
   }
-
   let prevDistances = new Map();
   for (const id of idsSets[0]) prevDistances.set(id, 0);
   const pathsSets = [];
-
   idsSets.forEach((currentSet, i) => {
     if (!i) return;
     const prevSet = idsSets[i - 1];
@@ -133,7 +132,6 @@ export function computePath({ points, height, width, imageData, markRadius }) {
     prevDistances = new Map();
     paths.forEach(({ id, distance }) => prevDistances.set(id, distance));
   });
-
   let minDist = Infinity,
     pathId;
   pathsSets[pathsSets.length - 1].forEach(({ id, distance }) => {
@@ -151,18 +149,14 @@ export function computePath({ points, height, width, imageData, markRadius }) {
         selectedPath = p;
       }
     });
-
     if (!selectedPath) {
       return;
     }
-
     totalPath = selectedPath.path.concat(totalPath);
     pathId = selectedPath.path[0];
   });
-
   return totalPath.map(id => idToPoint(id));
 }
-
 function inBounds(p, height, width) {
   return p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
 }

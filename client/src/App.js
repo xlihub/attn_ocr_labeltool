@@ -1,12 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
-
 import LabelHome from './label/LabelHome';
 import LabelingLoader from './label/LabelingLoader';
 import OverScreen from './label/OverScreen';
 import AdminApp from './admin/AdminApp';
 import Help from './help/Help';
-
 class App extends Component {
   render() {
     if (process.env.REACT_APP_DEMO) {
@@ -25,7 +23,6 @@ class App extends Component {
       };
       return <LabelingLoader {...props} />;
     }
-
     return (
       <Router>
         <Fragment>
@@ -49,5 +46,4 @@ class App extends Component {
     );
   }
 }
-
 export default App;

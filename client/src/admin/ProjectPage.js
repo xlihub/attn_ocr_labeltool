@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import {
   Header,
   Button,
@@ -8,21 +7,16 @@ import {
   List,
   Segment,
 } from 'semantic-ui-react';
-
 import DocumentMeta from 'react-document-meta';
-
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
-
 import update from 'immutability-helper';
 import arrayMove from 'array-move';
-
 import ProjectImages from './ProjectImages';
 import UploadImages from './UploadImages';
 import LabelFormItem from './LabelFormItem';
 import ImportData from './ImportData';
 import UploadReference from './UploadReference';
 import MLAssist from './MLAssist';
-
 export default class ProjectPage extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +25,6 @@ export default class ProjectPage extends Component {
       isLoaded: false,
       project: null,
     };
-
     this.onSortEnd = this.onSortEnd.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleNew = this.handleNew.bind(this);
@@ -39,7 +32,6 @@ export default class ProjectPage extends Component {
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleReferenceChange = this.handleReferenceChange.bind(this);
   }
-
   async componentDidMount() {
     const { match } = this.props;
     const { projectId } = match.params;
@@ -56,12 +48,10 @@ export default class ProjectPage extends Component {
       });
     }
   }
-
   componentDidUpdate(prevProps, prevState) {
     const { project } = this.state;
     if (!project) return;
     const { projectId } = this.props.match.params;
-
     if (prevState.project !== project) {
       fetch('/api/projects/' + projectId, {
         headers: {
@@ -69,11 +59,12 @@ export default class ProjectPage extends Component {
           'Content-Type': 'application/json',
         },
         method: 'PATCH',
-        body: JSON.stringify({ project }),
+        body: JSON.stringify({
+          project,
+        }),
       });
     }
   }
-
   onSortEnd({ oldIndex, newIndex }) {
     this.setState(({ project }) => ({
       project: update(project, {
@@ -85,7 +76,6 @@ export default class ProjectPage extends Component {
       }),
     }));
   }
-
   handleChange(oldValue, newValue) {
     const { project } = this.state;
     const edit = newValue ? [1, newValue] : [1];
@@ -104,7 +94,6 @@ export default class ProjectPage extends Component {
       }),
     });
   }
-
   handleNew() {
     const { project } = this.state;
     this.setState({
@@ -117,17 +106,14 @@ export default class ProjectPage extends Component {
       }),
     });
   }
-
   async handleDelete() {
     const { match, history } = this.props;
     const { projectId } = match.params;
     await fetch('/api/projects/' + projectId, {
       method: 'DELETE',
     });
-
     history.push('/admin/');
   }
-
   handleNameChange(e) {
     const { value } = e.target;
     const { project } = this.state;
@@ -139,7 +125,6 @@ export default class ProjectPage extends Component {
       }),
     });
   }
-
   handleReferenceChange({ referenceLink, referenceText }) {
     const { project } = this.state;
     this.setState({
@@ -153,19 +138,15 @@ export default class ProjectPage extends Component {
       }),
     });
   }
-
   render() {
     const { match } = this.props;
     const { projectId } = match.params;
-
     const { error, isLoaded, project } = this.state;
-
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <Loader active inline="centered" />;
     }
-
     const items = project.form.formParts;
     const renderedItems = items.length ? (
       items.map((value, index) => (
@@ -181,16 +162,29 @@ export default class ProjectPage extends Component {
         No labels, add labels using the plus button below
       </Header>
     );
-
     return (
       <DocumentMeta title={`Edit project ${project.name}`}>
-        <div style={{ display: 'flex' }}>
-          <div className="ui" style={{ paddingBottom: 200, flex: 1 }}>
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          <div
+            className="ui"
+            style={{
+              paddingBottom: 200,
+              flex: 1,
+            }}
+          >
             <Input
               placeholder="Project name"
               control="input"
               defaultValue={project.name}
-              style={{ fontSize: 24, width: '100%', marginTop: 10 }}
+              style={{
+                fontSize: 24,
+                width: '100%',
+                marginTop: 10,
+              }}
               onChange={this.handleNameChange}
             />
             <div
@@ -206,8 +200,13 @@ export default class ProjectPage extends Component {
                 onClick={e => e.target.select()}
               />
             </div>
-            <div id="labels" style={{ padding: '2em 0 110px 0' }}>
-              <Header disabled>LABELS</Header>
+            <div
+              id="labels"
+              style={{
+                padding: '2em 0 110px 0',
+              }}
+            >
+              <Header disabled>模板參數</Header>
               <SortableContainer onSortEnd={this.onSortEnd} useDragHandle>
                 {renderedItems}
               </SortableContainer>
@@ -215,26 +214,48 @@ export default class ProjectPage extends Component {
                 circular
                 icon="plus"
                 size="massive"
-                style={{ float: 'right', marginTop: '2em' }}
+                style={{
+                  float: 'right',
+                  marginTop: '2em',
+                }}
                 onClick={this.handleNew}
               />
             </div>
-            <div id="images" style={{ padding: '2em 0' }}>
-              <Header disabled>IMAGES</Header>
+            <div
+              id="images"
+              style={{
+                padding: '2em 0',
+              }}
+            >
+              <Header disabled>圖片列表</Header>
               <ProjectImages
                 projectId={projectId}
-                refetchRef={f => this.setState({ handleImagesChange: f })}
+                refetchRef={f =>
+                  this.setState({
+                    handleImagesChange: f,
+                  })
+                }
               />
             </div>
-            <div id="upload-images" style={{ padding: '2em 0' }}>
-              <Header disabled>UPLOAD IMAGES</Header>
+            <div
+              id="upload-images"
+              style={{
+                padding: '2em 0',
+              }}
+            >
+              <Header disabled>上傳圖片</Header>
               <UploadImages
                 projectId={projectId}
                 onChange={this.state.handleImagesChange}
               />
             </div>
-            <div id="import-data" style={{ padding: '2em 0' }}>
-              <Header disabled>IMPORT DATA</Header>
+            <div
+              id="import-data"
+              style={{
+                padding: '2em 0',
+              }}
+            >
+              <Header disabled>導入模板</Header>
               <ImportData
                 projectId={projectId}
                 onChange={() => {
@@ -243,15 +264,20 @@ export default class ProjectPage extends Component {
                 }}
               />
             </div>
-            <div id="export-data" style={{ padding: '2em 0' }}>
-              <Header disabled>EXPORT DATA</Header>
-              <a href={`/api/projects/${projectId}/export`}>
-                <Button
-                  icon="download"
-                  label="Download a zip-file with JSON-encoded labels"
-                />
-              </a>
-            </div>
+            {/*<div*/}
+            {/*  id="export-data"*/}
+            {/*  style={{*/}
+            {/*    padding: '2em 0',*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  <Header disabled>導出模板</Header>*/}
+            {/*  <a href={`/api/projects/${projectId}/export`}>*/}
+            {/*    <Button*/}
+            {/*      icon="download"*/}
+            {/*      label="下載模板文件"*/}
+            {/*    />*/}
+            {/*  </a>*/}
+            {/*</div>*/}
             {/*<div id="reference-information" style={{ padding: '2em 0' }}>*/}
             {/*  <Header disabled>REFERENCE INFORMATION</Header>*/}
             {/*  <UploadReference*/}
@@ -287,23 +313,23 @@ export default class ProjectPage extends Component {
               boxShadow: '0 0 #FFFFFF',
             }}
           >
-            <Header as="h4">On this page:</Header>
+            <Header as="h4">快捷跳轉:</Header>
             <List>
               <List.Item>
-                <a href="#labels">Labels</a>
+                <a href="#labels">模板參數</a>
               </List.Item>
               <List.Item>
-                <a href="#images">Images</a>
+                <a href="#images">圖片列表</a>
               </List.Item>
               <List.Item>
-                <a href="#upload-images">Upload Images</a>
+                <a href="#upload-images">上傳圖片</a>
               </List.Item>
               <List.Item>
-                <a href="#import-data">Import data</a>
+                <a href="#import-data">導入模板</a>
               </List.Item>
-              <List.Item>
-                <a href="#export-data">Export data</a>
-              </List.Item>
+              {/*<List.Item>*/}
+              {/*  <a href="#export-data">導出模板</a>*/}
+              {/*</List.Item>*/}
               {/*<List.Item>*/}
               {/*  <a href="#reference-information">Reference Info</a>*/}
               {/*</List.Item>*/}
@@ -320,13 +346,10 @@ export default class ProjectPage extends Component {
     );
   }
 }
-
 const SortableItem = sortableElement(LabelFormItem);
-
 const SortableContainer = sortableContainer(({ children }) => {
   return <div>{children}</div>;
 });
-
 const newFormPart = () => {
   const id = Math.random()
     .toString(36)

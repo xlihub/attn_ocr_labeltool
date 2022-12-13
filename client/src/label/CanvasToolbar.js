@@ -1,6 +1,5 @@
 import React, { PureComponent, Component } from 'react';
 import { Radio, Select, Button, Loader } from 'semantic-ui-react';
-
 const defaultStyle = {
   width: '100%',
   background: '#fcfcfc',
@@ -8,28 +7,44 @@ const defaultStyle = {
   borderBottom: '1px solid #ccc',
   padding: '10px 15px',
 };
-
 const smoothingOptions = [
-  { value: 0.3, text: 'Slight' },
-  { value: 0.6, text: 'Normal' },
-  { value: 1.2, text: 'Strong' },
-  { value: 1.6, text: 'Extreme' },
+  {
+    value: 0.3,
+    text: 'Slight',
+  },
+  {
+    value: 0.6,
+    text: 'Normal',
+  },
+  {
+    value: 1.2,
+    text: 'Strong',
+  },
+  {
+    value: 1.6,
+    text: 'Extreme',
+  },
 ];
-
 const precisionOptions = [
-  { value: 0, text: '1x1' },
-  { value: 1, text: '3x3' },
-  { value: 2, text: '5x5' },
+  {
+    value: 0,
+    text: '1x1',
+  },
+  {
+    value: 1,
+    text: '3x3',
+  },
+  {
+    value: 2,
+    text: '5x5',
+  },
 ];
-
 const selectStyle = {
   marginLeft: 10,
 };
-
 const groupStyle = {
   marginLeft: 20,
 };
-
 export class PathToolbar extends PureComponent {
   render() {
     const { style, enabled, smoothing, precision, onChange } = this.props;
@@ -40,16 +55,24 @@ export class PathToolbar extends PureComponent {
       style: selectStyle,
       onChange: (e, { name, value }) => onChange(name, value),
     };
-
     return (
-      <div style={{ ...style, ...defaultStyle }}>
+      <div
+        style={{
+          ...style,
+          ...defaultStyle,
+        }}
+      >
         <Radio
           label="Auto-tracing"
           toggle
           checked={enabled}
           onChange={(e, { checked }) => onChange('enabled', checked)}
         />
-        <span style={{ marginLeft: 100 }}>
+        <span
+          style={{
+            marginLeft: 100,
+          }}
+        >
           <span style={groupStyle}>
             Smoothing:
             <Select
@@ -73,14 +96,24 @@ export class PathToolbar extends PureComponent {
     );
   }
 }
-
 const predictionSmoothingOptions = [
-  { value: 1.0, text: 'Slight' },
-  { value: 2.5, text: 'Normal' },
-  { value: 5.0, text: 'Strong' },
-  { value: 10.0, text: 'Extreme' },
+  {
+    value: 1.0,
+    text: 'Slight',
+  },
+  {
+    value: 2.5,
+    text: 'Normal',
+  },
+  {
+    value: 5.0,
+    text: 'Strong',
+  },
+  {
+    value: 10.0,
+    text: 'Extreme',
+  },
 ];
-
 let lastSelected = {};
 export class MakePredictionToolbar extends Component {
   constructor(props) {
@@ -91,28 +124,34 @@ export class MakePredictionToolbar extends Component {
       loading: false,
     };
   }
-
   async handleGenerate(model, smoothing) {
-    this.setState({ loading: true });
-    await this.props.generate(model, { smoothing });
-    this.setState({ loading: false });
+    this.setState({
+      loading: true,
+    });
+    await this.props.generate(model, {
+      smoothing,
+    });
+    this.setState({
+      loading: false,
+    });
   }
-
   render() {
     const { style, models } = this.props;
     const { model, smoothing, loading } = this.state;
-
     const selectProps = {
       style: selectStyle,
       onChange: (e, { name, value }) => {
-        this.setState({ [name]: value });
+        this.setState({
+          [name]: value,
+        });
         lastSelected[name] = value;
       },
     };
-
-    const options = models.map(({ id, name }) => ({ value: id, text: name }));
+    const options = models.map(({ id, name }) => ({
+      value: id,
+      text: name,
+    }));
     const m = models.find(m => m.id === model);
-
     const smoothingSelect =
       m.type === 'semantic_segmentation' ? (
         <span style={groupStyle}>
@@ -125,14 +164,17 @@ export class MakePredictionToolbar extends Component {
           />
         </span>
       ) : null;
-
     const disabled = m.type === 'object_classification';
     const text = disabled
       ? 'This model can only be used to generate general tags for text fields.'
       : null;
-
     return (
-      <div style={{ ...style, ...defaultStyle }}>
+      <div
+        style={{
+          ...style,
+          ...defaultStyle,
+        }}
+      >
         <span style={groupStyle}>
           Generate selections using a model
           <Select

@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
 import Hotkeys from 'react-hot-keys';
 import update from 'immutability-helper';
-
 import 'semantic-ui-css/semantic.min.css';
-
 import Canvas from './Canvas';
 import HotkeysPanel from './HotkeysPanel';
 import Sidebar from './Sidebar';
 import { PathToolbar, MakePredictionToolbar } from './CanvasToolbar';
 import Reference from './Reference';
 import './LabelingApp.css';
-
 import { genId, colors } from './utils';
 import { computeTrace } from './tracing';
 import { withHistory } from './LabelingAppHistoryHOC';
@@ -28,48 +25,44 @@ import { withPredictions } from './MakePredictionsHOC';
 class LabelingApp extends Component {
   constructor(props) {
     super(props);
-
     const { labels } = props;
     const toggles = {};
     labels.map(label => (toggles[label.id] = true));
-
     this.state = {
       selected: null,
       toggles,
-
       selectedFigureId: null,
-
       // UI
-      reassigning: { status: false, type: null },
+      reassigning: {
+        status: false,
+        type: null,
+      },
       hotkeysPanel: false,
     };
-
     this.handleChange = this.handleChange.bind(this);
     this.handleSelected = this.handleSelected.bind(this);
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
     this.canvasRef = React.createRef();
   }
-
   handleSelected(selected) {
     if (selected === this.state.selected) return;
     const { pushState } = this.props;
-
     if (!selected) {
       pushState(
         state => ({
           unfinishedFigure: null,
         }),
-        () => this.setState({ selected })
+        () =>
+          this.setState({
+            selected,
+          })
       );
       return;
     }
-
     const { labels } = this.props;
-
     const labelIdx = labels.findIndex(label => label.id === selected);
     const type = labels[labelIdx].type;
     const color = colors[labelIdx];
-
     pushState(
       state => ({
         unfinishedFigure: {
@@ -79,30 +72,37 @@ class LabelingApp extends Component {
           points: [],
         },
       }),
-      () => this.setState({ selected })
+      () =>
+        this.setState({
+          selected,
+        })
     );
   }
-
   handleSelectionChange(figureId) {
     if (figureId) {
-      this.setState({ selectedFigureId: figureId });
+      this.setState({
+        selectedFigureId: figureId,
+      });
     } else {
       this.setState({
-        reassigning: { status: false, type: null },
+        reassigning: {
+          status: false,
+          type: null,
+        },
         selectedFigureId: null,
       });
     }
   }
-
   handleChange(eventType, figure, newLabelId) {
     if (!figure.color) return;
     const { labels, figures, pushState, height, width, imageData } = this.props;
     const label =
       figure.color === 'gray'
-        ? { id: '__temp' }
+        ? {
+            id: '__temp',
+          }
         : labels[colors.indexOf(figure.color)];
     const idx = (figures[label.id] || []).findIndex(f => f.id === figure.id);
-
     switch (eventType) {
       case 'new':
         pushState(
@@ -126,7 +126,6 @@ class LabelingApp extends Component {
             })
         );
         break;
-
       case 'replace':
         pushState(state => {
           let { tracingOptions } = figure;
@@ -141,9 +140,11 @@ class LabelingApp extends Component {
               trace: computeTrace(figure.points, imageInfo, tracingOptions),
             };
           } else {
-            tracingOptions = { ...tracingOptions, trace: [] };
+            tracingOptions = {
+              ...tracingOptions,
+              trace: [],
+            };
           }
-
           return {
             figures: update(state.figures, {
               [label.id]: {
@@ -164,7 +165,6 @@ class LabelingApp extends Component {
           };
         });
         break;
-
       case 'delete':
         pushState(state => ({
           figures: update(state.figures, {
@@ -174,10 +174,11 @@ class LabelingApp extends Component {
           }),
         }));
         break;
-
       case 'unfinished':
         pushState(
-          state => ({ unfinishedFigure: figure }),
+          state => ({
+            unfinishedFigure: figure,
+          }),
           () => {
             const { unfinishedFigure } = this.props;
             const { type, points } = unfinishedFigure;
@@ -187,7 +188,6 @@ class LabelingApp extends Component {
           }
         );
         break;
-
       case 'recolor':
         if (label.id === newLabelId) return;
         pushState(state => ({
@@ -208,12 +208,10 @@ class LabelingApp extends Component {
           }),
         }));
         break;
-
       default:
         throw new Error('unknown event type ' + eventType);
     }
   }
-
   render() {
     const {
       labels,
@@ -238,7 +236,6 @@ class LabelingApp extends Component {
       toggles,
       hotkeysPanel,
     } = this.state;
-
     const forwardedProps = {
       onBack,
       onSkip,
@@ -246,7 +243,6 @@ class LabelingApp extends Component {
       models,
       makePrediction,
     };
-
     let selectedFigure = null;
     const allFigures = [];
     labels.forEach((label, i) => {
@@ -262,9 +258,11 @@ class LabelingApp extends Component {
             type: figure.type,
             tracingOptions: figure.tracingOptions,
           });
-
           if (figure.id === selectedFigureId) {
-            selectedFigure = { ...figure, color: colors[i] };
+            selectedFigure = {
+              ...figure,
+              color: colors[i],
+            };
           }
         }
       });
@@ -275,7 +273,6 @@ class LabelingApp extends Component {
         ...figure,
       });
     });
-
     const sidebarProps = reassigning.status
       ? {
           title: 'Select the new label',
@@ -285,8 +282,12 @@ class LabelingApp extends Component {
             if (figure) {
               this.handleChange('recolor', figure, selected);
             }
-
-            this.setState({ reassigning: { status: false, type: null } });
+            this.setState({
+              reassigning: {
+                status: false,
+                type: null,
+              },
+            });
           },
           filter: label => label.type === reassigning.type,
           labelData: figures,
@@ -299,24 +300,35 @@ class LabelingApp extends Component {
           onToggle: label =>
             this.setState({
               toggles: update(toggles, {
-                [label.id]: { $set: !toggles[label.id] },
+                [label.id]: {
+                  $set: !toggles[label.id],
+                },
               }),
             }),
-          openHotkeys: () => this.setState({ hotkeysPanel: true }),
+          openHotkeys: () =>
+            this.setState({
+              hotkeysPanel: true,
+            }),
           onFormChange: (labelId, newValue) =>
             pushState(state => ({
-              figures: update(figures, { [labelId]: { $set: newValue } }),
+              figures: update(figures, {
+                [labelId]: {
+                  $set: newValue,
+                },
+              }),
             })),
           labelData: figures,
         };
-
     const hotkeysPanelDOM = hotkeysPanel ? (
       <HotkeysPanel
         labels={labels.map(label => label.name)}
-        onClose={() => this.setState({ hotkeysPanel: false })}
+        onClose={() =>
+          this.setState({
+            hotkeysPanel: false,
+          })
+        }
       />
     ) : null;
-
     let toolbarDOM = null;
     const toolbarStyle = {
       position: 'absolute',
@@ -324,7 +336,6 @@ class LabelingApp extends Component {
       left: 0,
       zIndex: 10000,
     };
-
     if (selectedFigure && selectedFigure.type === 'polygon') {
       const options = selectedFigure.tracingOptions || {
         enabled: false,
@@ -337,12 +348,15 @@ class LabelingApp extends Component {
           'replace',
           update(selectedFigure, {
             tracingOptions: {
-              $set: update(options, { [property]: { $set: value } }),
+              $set: update(options, {
+                [property]: {
+                  $set: value,
+                },
+              }),
             },
           })
         );
       };
-
       toolbarDOM = (
         <PathToolbar style={toolbarStyle} onChange={handler} {...options} />
       );
@@ -360,7 +374,6 @@ class LabelingApp extends Component {
         />
       );
     }
-
     const demoBar = this.props.demo ? (
       <div
         style={{
@@ -379,24 +392,47 @@ class LabelingApp extends Component {
         </a>
       </div>
     ) : null;
-
     return (
       <div
-        style={{ display: 'flex', height: '100vh', flexDirection: 'column' }}
+        style={{
+          display: 'flex',
+          height: '100vh',
+          flexDirection: 'column',
+        }}
       >
         {demoBar}
-        <div style={{ display: 'flex', flex: 1, height: '100%' }}>
+        <div
+          style={{
+            display: 'flex',
+            flex: 1,
+            height: '100%',
+          }}
+        >
           <Hotkeys keyName="ctrl+z" onKeyDown={popState}>
             <Sidebar
               labels={labels}
               {...sidebarProps}
               {...forwardedProps}
-              style={{ flex: 1, maxWidth: 300 }}
+              style={{
+                flex: 1,
+                maxWidth: 300,
+              }}
             />
             {hotkeysPanelDOM}
-            <div style={{ flex: 4, display: 'flex', flexDirection: 'column' }}>
+            <div
+              style={{
+                flex: 4,
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
               <Reference {...reference} />
-              <div style={{ position: 'relative', height: '100%' }}>
+              <div
+                style={{
+                  position: 'relative',
+                  height: '100%',
+                }}
+              >
                 {toolbarDOM}
                 <Canvas
                   url={imageUrl}
@@ -406,11 +442,18 @@ class LabelingApp extends Component {
                   unfinishedFigure={unfinishedFigure}
                   onChange={this.handleChange}
                   onReassignment={type =>
-                    this.setState({ reassigning: { status: true, type } })
+                    this.setState({
+                      reassigning: {
+                        status: true,
+                        type,
+                      },
+                    })
                   }
                   onSelectionChange={this.handleSelectionChange}
                   ref={this.canvasRef}
-                  style={{ flex: 1 }}
+                  style={{
+                    flex: 1,
+                  }}
                 />
               </div>
             </div>
@@ -420,5 +463,4 @@ class LabelingApp extends Component {
     );
   }
 }
-
 export default withLoadImageData(withHistory(withPredictions(LabelingApp)));

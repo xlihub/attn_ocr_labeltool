@@ -1,7 +1,6 @@
 import { computePath } from '../image-processing/LiveWire';
 import { computeVectorized } from '../image-processing/Segmentation';
 import { LineUtil } from 'leaflet';
-
 export function computeTrace(
   points,
   { height, width, imageData },
@@ -20,9 +19,11 @@ export function computeTrace(
     markRadius: precision,
   });
   const simplePath = LineUtil.simplify(path, smoothing || 0.6);
-  return simplePath.map(({ x, y }) => ({ lng: x, lat: y }));
+  return simplePath.map(({ x, y }) => ({
+    lng: x,
+    lat: y,
+  }));
 }
-
 export function vectorizeSegmentation(imageData, { scaling, smoothing }) {
   scaling = scaling || 1.0;
   smoothing = smoothing || 2.0;
@@ -31,7 +32,10 @@ export function vectorizeSegmentation(imageData, { scaling, smoothing }) {
   const paths = computeVectorized(imageData);
   return paths.map(path => {
     const simplePath = LineUtil.simplify(
-      path.map(([y, x]) => ({ x, y: imageData.length - y })),
+      path.map(([y, x]) => ({
+        x,
+        y: imageData.length - y,
+      })),
       smoothing
     );
     return simplePath.map(({ x, y }) => ({

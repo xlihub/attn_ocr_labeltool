@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import update from 'immutability-helper';
-
 export function withHistory(Comp) {
   return class HistoryLayer extends Component {
     constructor(props) {
       super(props);
-
       const { labelData, labels } = props;
       let figures = {};
-
       labels.map(label => (figures[label.id] = []));
       figures.__temp = [];
       Object.keys(labelData).forEach(key => {
@@ -16,16 +13,15 @@ export function withHistory(Comp) {
       });
       figures = this.flipY(figures);
       this.state = {
-        figures, // mapping from label name to a list of Figure structures
+        figures,
+        // mapping from label name to a list of Figure structures
         unfinishedFigure: null,
         figuresHistory: [],
         unfinishedFigureHistory: [],
       };
-
       this.pushState = this.pushState.bind(this);
       this.popState = this.popState.bind(this);
     }
-
     flipY(figures) {
       // flip the y-coordinate
       const f = {};
@@ -33,7 +29,6 @@ export function withHistory(Comp) {
         f[label] = figures[label].map(figure => {
           if (figure.type !== 'polygon' && figure.type !== 'bbox')
             return figure;
-
           let tracingOptions;
           if (figure.tracingOptions && figure.tracingOptions.enabled) {
             tracingOptions = {
@@ -43,7 +38,6 @@ export function withHistory(Comp) {
           } else {
             tracingOptions = figure.tracingOptions;
           }
-
           return {
             ...figure,
             points: this.transformPoints(figure.points),
@@ -53,7 +47,6 @@ export function withHistory(Comp) {
       });
       return f;
     }
-
     transformPoints(points) {
       const { height } = this.props;
       return points.map(({ lat, lng }) => ({
@@ -61,11 +54,9 @@ export function withHistory(Comp) {
         lng,
       }));
     }
-
     componentDidUpdate(prevProps, prevState) {
       const { onLabelChange, height, width } = this.props;
       const { figures } = this.state;
-
       if (figures !== prevState.figures) {
         onLabelChange({
           labels: this.flipY(figures),
@@ -74,7 +65,6 @@ export function withHistory(Comp) {
         });
       }
     }
-
     pushState(stateChange, cb) {
       this.setState(
         state => ({
@@ -89,23 +79,19 @@ export function withHistory(Comp) {
         cb
       );
     }
-
     popState() {
       this.setState(state => {
         let { figuresHistory, unfinishedFigureHistory } = state;
         if (!figuresHistory.length) {
           return {};
         }
-
         figuresHistory = figuresHistory.slice();
         unfinishedFigureHistory = unfinishedFigureHistory.slice();
         const figures = figuresHistory.pop();
         let unfinishedFigure = unfinishedFigureHistory.pop();
-
         if (unfinishedFigure && !unfinishedFigure.points.length) {
           unfinishedFigure = null;
         }
-
         return {
           figures,
           unfinishedFigure,
@@ -114,7 +100,6 @@ export function withHistory(Comp) {
         };
       });
     }
-
     render() {
       const { props, state, pushState, popState } = this;
       const { figures, unfinishedFigure } = state;

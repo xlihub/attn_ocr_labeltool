@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { genId } from './utils';
 import { vectorizeSegmentation } from './tracing';
-
 export function withPredictions(Comp) {
   return class PredictionsLayer extends Component {
     constructor(props) {
@@ -9,14 +8,11 @@ export function withPredictions(Comp) {
       this.state = {
         models: [],
       };
-
       this.makePrediction = this.makePrediction.bind(this);
     }
-
     async makePrediction(model, options = {}) {
       const { imgB64, b64Scaling, height, width, fetch } = this.props;
       const { id } = model;
-
       const req = fetch('/api/mlmodels/' + id, {
         method: 'POST',
         headers: {
@@ -33,9 +29,7 @@ export function withPredictions(Comp) {
           ],
         }),
       });
-
       const resp = await (await req).json();
-
       if (model.type === 'object_detection') {
         const preds = [];
         resp.predictions.forEach(({ det_boxes: [y1, x1, y2, x2] }) => {
@@ -43,8 +37,14 @@ export function withPredictions(Comp) {
             type: 'bbox',
             color: 'gray',
             points: [
-              { lng: x1 * width, lat: (1 - y1) * height },
-              { lng: x2 * width, lat: (1 - y2) * height },
+              {
+                lng: x1 * width,
+                lat: (1 - y1) * height,
+              },
+              {
+                lng: x2 * width,
+                lat: (1 - y2) * height,
+              },
             ],
             id: genId(),
             modelId: model.id,
@@ -66,16 +66,15 @@ export function withPredictions(Comp) {
           modelId: model.id,
         }));
       }
-
       return resp.predictions;
     }
-
     async componentDidMount() {
       const { fetch } = this.props;
       const models = await (await fetch('/api/mlmodels')).json();
-      this.setState({ models });
+      this.setState({
+        models,
+      });
     }
-
     render() {
       const { props, state } = this;
       const { imgB64, ...passedProps } = props;
@@ -84,7 +83,6 @@ export function withPredictions(Comp) {
         models,
         makePrediction: this.makePrediction,
       };
-
       return <Comp {...newProps} {...passedProps} />;
     }
   };

@@ -1,14 +1,15 @@
 import React from 'react';
 import { Header, Icon, Segment, Table } from 'semantic-ui-react';
-
 const style = {
   height: '100vh',
   overflowY: 'auto',
   overflowX: 'hidden',
   borderRight: '1px solid #ccc',
 };
-const headerIconStyle = { fontSize: '0.8em', float: 'right' };
-
+const headerIconStyle = {
+  fontSize: '0.8em',
+  float: 'right',
+};
 export default function HotkeysPanel({ labels, onClose }) {
   const labelHotkeys = labels.map((label, i) => (
     <Table.Row key={label}>
@@ -16,7 +17,6 @@ export default function HotkeysPanel({ labels, onClose }) {
       <Table.Cell>{i}</Table.Cell>
     </Table.Row>
   ));
-
   return (
     <div style={style}>
       <Header as="h2" attached="top">

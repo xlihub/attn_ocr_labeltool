@@ -5,59 +5,51 @@ import Control from 'react-leaflet-control';
 import Hotkeys from 'react-hot-keys';
 import update from 'immutability-helper';
 import 'leaflet-path-drag';
-
 import 'leaflet/dist/leaflet.css';
-
 import { Icon } from 'semantic-ui-react';
-
 import { BBoxFigure, PolygonFigure } from './Figure';
-
 import { convertPoint, lighten, colorMapping } from './utils';
 import { withBounds, maxZoom } from './CalcBoundsHOC';
-
 class Canvas extends Component {
   constructor(props, context) {
     super(props, context);
-
     this.state = {
       zoom: -1,
       selectedFigureId: null,
-      cursorPos: { lat: 0, lng: 0 },
+      cursorPos: {
+        lat: 0,
+        lng: 0,
+      },
     };
     this.prevSelectedFigure = null;
     this.skipNextClickEvent = false;
-
     this.mapRef = React.createRef();
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
   }
-
   componentDidUpdate(prevProps) {
     const { onSelectionChange } = this.props;
     const { selectedFigureId } = this.state;
-
     if (this.prevSelectedFigureId !== selectedFigureId && onSelectionChange) {
       this.prevSelectedFigureId = selectedFigureId;
       onSelectionChange(selectedFigureId);
     }
   }
-
   getSelectedFigure() {
     const { selectedFigureId } = this.state;
     const { figures } = this.props;
     return figures.find(f => f.id === selectedFigureId);
   }
-
   handleChange(eventType, { point, pos, figure, points }) {
     const { onChange, unfinishedFigure } = this.props;
     const drawing = !!unfinishedFigure;
-
     switch (eventType) {
       case 'add':
         if (drawing) {
           let newState = unfinishedFigure.points;
-          newState = update(newState, { $push: [point] });
-
+          newState = update(newState, {
+            $push: [point],
+          });
           onChange(
             'unfinished',
             update(unfinishedFigure, {
@@ -69,63 +61,75 @@ class Canvas extends Component {
         } else {
           onChange(
             'replace',
-            update(figure, { points: { $splice: [[pos, 0, point]] } })
+            update(figure, {
+              points: {
+                $splice: [[pos, 0, point]],
+              },
+            })
           );
         }
         break;
-
       case 'end':
         const f = unfinishedFigure;
         onChange('new', f);
         break;
-
       case 'move':
         onChange(
           'replace',
-          update(figure, { points: { $splice: [[pos, 1, point]] } })
+          update(figure, {
+            points: {
+              $splice: [[pos, 1, point]],
+            },
+          })
         );
         break;
-
       case 'replace':
-        onChange('replace', update(figure, { points: { $set: points } }));
+        onChange(
+          'replace',
+          update(figure, {
+            points: {
+              $set: points,
+            },
+          })
+        );
         break;
-
       case 'remove':
         onChange(
           'replace',
-          update(figure, { points: { $splice: [[pos, 1]] } })
+          update(figure, {
+            points: {
+              $splice: [[pos, 1]],
+            },
+          })
         );
         break;
-
       default:
         throw new Error('unknown event type ' + eventType);
     }
   }
-
   handleClick(e) {
     const { unfinishedFigure } = this.props;
     const drawing = !!unfinishedFigure;
-
     if (this.skipNextClickEvent) {
       // a hack, for whatever reason it is really hard to stop event propagation in leaflet
       this.skipNextClickEvent = false;
       return;
     }
-
     if (drawing) {
-      this.handleChange('add', { point: convertPoint(e.latlng) });
+      this.handleChange('add', {
+        point: convertPoint(e.latlng),
+      });
       return;
     }
-
     if (!drawing) {
-      this.setState({ selectedFigureId: null });
+      this.setState({
+        selectedFigureId: null,
+      });
       return;
     }
   }
-
   renderFigure(figure, options) {
     const Comp = figure.type === 'bbox' ? BBoxFigure : PolygonFigure;
-
     return (
       <Comp
         key={figure.id}
@@ -135,7 +139,6 @@ class Canvas extends Component {
       />
     );
   }
-
   render() {
     const {
       url,
@@ -149,14 +152,11 @@ class Canvas extends Component {
       style,
     } = this.props;
     const { zoom, selectedFigureId, cursorPos } = this.state;
-
     const drawing = !!unfinishedFigure;
-
     const calcDistance = (p1, p2) => {
       const map = this.mapRef.current.leafletElement;
       return map.latLngToLayerPoint(p1).distanceTo(map.latLngToLayerPoint(p2));
     };
-
     const unfinishedDrawingDOM = drawing
       ? this.renderFigure(unfinishedFigure, {
           finished: false,
@@ -168,7 +168,6 @@ class Canvas extends Component {
           newPoint: cursorPos,
         })
       : null;
-
     const getColor = f =>
       f.tracingOptions && f.tracingOptions.enabled
         ? lighten(colorMapping[f.color], 80)
@@ -181,12 +180,14 @@ class Canvas extends Component {
         sketch: f.tracingOptions && f.tracingOptions.enabled,
         color: getColor(f),
         vertexColor: colorMapping[f.color],
-        onSelect: () => this.setState({ selectedFigureId: f.id }),
+        onSelect: () =>
+          this.setState({
+            selectedFigureId: f.id,
+          }),
         onChange: this.handleChange,
         calcDistance,
       })
     );
-
     const hotkeysDOM = (
       <Hotkeys
         keyName="backspace,del,c,f,-,=,left,right,up,down"
@@ -215,7 +216,6 @@ class Canvas extends Component {
               }
             }
           }
-
           const map = this.mapRef.current.leafletElement;
           if (key === 'left') {
             map.panBy([80, 0]);
@@ -238,7 +238,6 @@ class Canvas extends Component {
         }}
       />
     );
-
     let renderedTrace = null;
     const selectedFigure = this.getSelectedFigure();
     if (selectedFigure && selectedFigure.type === 'polygon') {
@@ -257,7 +256,6 @@ class Canvas extends Component {
       };
       renderedTrace = <PolygonFigure figure={figure} options={traceOptions} />;
     }
-
     return (
       <div
         style={{
@@ -278,8 +276,16 @@ class Canvas extends Component {
           keyboard={false}
           attributionControl={false}
           onClick={this.handleClick}
-          onZoom={e => this.setState({ zoom: e.target.getZoom() })}
-          onMousemove={e => this.setState({ cursorPos: e.latlng })}
+          onZoom={e =>
+            this.setState({
+              zoom: e.target.getZoom(),
+            })
+          }
+          onMousemove={e =>
+            this.setState({
+              cursorPos: e.latlng,
+            })
+          }
           ref={this.mapRef}
         >
           <ZoomControl position="bottomright" />
@@ -293,7 +299,13 @@ class Canvas extends Component {
                 map.setView(map.options.center, map.options.zoom);
               }}
             >
-              <Icon name="redo" fitted style={{ fontSize: '1.2em' }} />
+              <Icon
+                name="redo"
+                fitted
+                style={{
+                  fontSize: '1.2em',
+                }}
+              />
             </a>
           </Control>
           <ImageOverlay url={url} bounds={bounds} />
@@ -306,5 +318,4 @@ class Canvas extends Component {
     );
   }
 }
-
 export default withBounds(Canvas);

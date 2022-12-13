@@ -13,14 +13,12 @@ export const colorMapping = {
   gray: '#A0A0A0',
   black: '#000000',
 };
-
 export function convertPoint(p) {
   return {
     lat: p.lat,
     lng: p.lng,
   };
 }
-
 export function lighten(col, amt) {
   let usePound = false;
   if (col[0] === '#') {
@@ -39,7 +37,6 @@ export function lighten(col, amt) {
   else if (g < 0) g = 0;
   return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
 }
-
 export function genId() {
   return (
     Math.random()
@@ -50,11 +47,9 @@ export function genId() {
       .substring(2, 15)
   );
 }
-
 export function exportLabelData(labelData, formParts) {
   const shapes = [];
   const labels = [];
-
   formParts.forEach(({ id, type, name, prompt, options }) => {
     const things = labelData.labels[id];
     if (type === 'bbox' || type === 'polygon') {
@@ -62,7 +57,6 @@ export function exportLabelData(labelData, formParts) {
         if (type === 'polygon') {
           return points;
         }
-
         const [[x1, y1], [x2, y2]] = points;
         return [[x1, y1], [x1, y2], [x2, y2], [x2, y1]];
       }
@@ -107,7 +101,6 @@ export function exportLabelData(labelData, formParts) {
       });
     }
   });
-
   const out = {
     flags: {},
     shapes,
@@ -117,10 +110,8 @@ export function exportLabelData(labelData, formParts) {
     imagePath: '',
     imageData: null,
   };
-
   return JSON.stringify(out);
 }
-
 export const shortcuts = '1234567890qwertasdfgzxcvb';
 export const colors = [
   'black',

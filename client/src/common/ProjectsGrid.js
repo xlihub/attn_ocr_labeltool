@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Grid, Button, Loader, Header } from 'semantic-ui-react';
-
 export default class ProjectsGrid extends Component {
   constructor(props) {
     super(props);
@@ -10,10 +9,8 @@ export default class ProjectsGrid extends Component {
       isLoaded: false,
       projects: [],
     };
-
     this.onNewProject = this.onNewProject.bind(this);
   }
-
   async componentDidMount() {
     try {
       const r = await fetch('/api/projects/');
@@ -33,25 +30,23 @@ export default class ProjectsGrid extends Component {
       });
     }
   }
-
   async onNewProject() {
-    const newProjectRes = await fetch('/api/projects', { method: 'POST' });
+    const newProjectRes = await fetch('/api/projects', {
+      method: 'POST',
+    });
     const newProject = await newProjectRes.json();
     this.setState({
       projects: this.state.projects.concat([newProject]),
     });
   }
-
   render() {
     const { error, isLoaded, projects } = this.state;
     const { linkPrefix, newButton, title } = this.props;
-
     if (error) {
       return <div>Error: {error.message}</div>;
     } else if (!isLoaded) {
       return <Loader active inline="centered" />;
     }
-
     const renderProjectCard = project => {
       const { id, name, form, imagesCount, labelsCount } = project;
       const info = `${imagesCount} images, ${labelsCount} labeled`;
@@ -64,14 +59,23 @@ export default class ProjectsGrid extends Component {
         </Grid.Column>
       );
     };
-
     const renderedButton = newButton ? (
-      <Button style={{ padding: '1.5em' }} onClick={this.onNewProject}>
-        <span style={{ fontSize: '4em' }}>+</span>
+      <Button
+        style={{
+          padding: '1.5em',
+        }}
+        onClick={this.onNewProject}
+      >
+        <span
+          style={{
+            fontSize: '4em',
+          }}
+        >
+          +
+        </span>
         <div>Make a new project</div>
       </Button>
     ) : null;
-
     return (
       <div>
         <Header as="h1">{title}</Header>

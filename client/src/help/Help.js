@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 import DocumentMeta from 'react-document-meta';
-
 import { Header, List, Icon, Label } from 'semantic-ui-react';
-
 import Menubar from '../common/Menubar';
-
 import labelingInterfaceAnnotatedImg from './tutorial/labeling-interface-annotated.png';
 import labelsImg from './tutorial/labels.png';
 import bboxLabelingImg from './tutorial/bbox-labeling.gif';
@@ -19,25 +16,32 @@ import toolbarImg from './tutorial/toolbar.png';
 import mlObjectDescriptionImg from './tutorial/ml-object-description.gif';
 import mlObjectDetectionImg from './tutorial/ml-object-detection.gif';
 import mlSemanticSegmentationImg from './tutorial/ml-semantic-segmentation.gif';
-
 import projectPageImg from './tutorial/project-page.png';
 import projectImagesImg from './tutorial/project-images.png';
 import projectDataImg from './tutorial/project-data.png';
 import projectReferenceImg from './tutorial/project-reference.png';
 import projectReferenceInterfaceImg from './tutorial/project-reference-interface.png';
 import projectMlAssistImg from './tutorial/project-ml-assist.png';
-
 function Img({ src, caption }) {
   return (
-    <figure style={{ textAlign: 'center', margin: '1em 1em' }}>
+    <figure
+      style={{
+        textAlign: 'center',
+        margin: '1em 1em',
+      }}
+    >
       <img src={src} alt={caption} />
-      <figcaption style={{ color: '#999', fontSize: '12px' }}>
+      <figcaption
+        style={{
+          color: '#999',
+          fontSize: '12px',
+        }}
+      >
         {caption}
       </figcaption>
     </figure>
   );
 }
-
 const sections = [
   {
     id: 'labeling',
@@ -347,33 +351,45 @@ const sections = [
     },
   },
 ];
-
 export default class Help extends Component {
   render() {
     const links = sections.map(section => (
       <List.Item key={section.id}>
-        <List.Icon name="circle" style={{ opacity: 0.0 }} />
+        <List.Icon
+          name="circle"
+          style={{
+            opacity: 0.0,
+          }}
+        />
         <List.Content>
           <Link to={'/help/' + section.id}>{section.title}</Link>
         </List.Content>
       </List.Item>
     ));
-
     const renderer = ({ match: { params } }) => {
       const Comp = sections.find(({ id }) => id === params.id).comp;
       return <Comp />;
     };
-
     const exactRenderer = ({ history }) => {
       history.replace('/help/labeling');
       return null;
     };
-
     return (
       <Menubar active="help">
         <DocumentMeta title="Help -- Label Tool">
-          <div className="help-body" style={{ display: 'flex', marginTop: 30 }}>
-            <List style={{ maxWidth: 200, minHeight: 500 }}>
+          <div
+            className="help-body"
+            style={{
+              display: 'flex',
+              marginTop: 30,
+            }}
+          >
+            <List
+              style={{
+                maxWidth: 200,
+                minHeight: 500,
+              }}
+            >
               <List.Item>
                 <List.Icon name="align left" />
                 <List.Content>
@@ -382,7 +398,13 @@ export default class Help extends Component {
               </List.Item>
               {links}
             </List>
-            <div style={{ flex: 1, paddingBottom: '5em', margin: '0 90px' }}>
+            <div
+              style={{
+                flex: 1,
+                paddingBottom: '5em',
+                margin: '0 90px',
+              }}
+            >
               <Route path="/help/:id" render={renderer} />
               <Route exact path="/help" render={exactRenderer} />
             </div>
