@@ -66,7 +66,7 @@ export default class LabelingLoader extends Component {
     }
   }
   async pushUpdate(labelData) {
-    console.log(labelData);
+    // console.log(labelData);
     const { imageId } = this.props.match.params;
     const { success } = await (await this.fetch('/api/images/' + imageId, {
       method: 'PATCH',
@@ -78,7 +78,7 @@ export default class LabelingLoader extends Component {
         labelData,
       }),
     })).json();
-    console.log(success);
+    // console.log(success);
   }
   async markComplete() {
     const { imageId } = this.props.match.params;
@@ -99,19 +99,19 @@ export default class LabelingLoader extends Component {
         'Content-Type': 'application/json',
       },
     })).json();
-    console.log(img);
+    // console.log(img);
     if (img) {
       const img_id = img.id;
       let labelData = img.labelData;
-      console.log(labelData);
+      // console.log(labelData);
       var bill_type,
         cus_no,
         cus_name = '';
-      console.log(this);
+      // console.log(this);
       const { project } = this.state;
       project.form.formParts.forEach(({ id, type, name, prompt }) => {
         const things = labelData.labels[id];
-        console.log(things);
+        // console.log(things);
         if (type === 'text' || type === 'select-one') {
           if (name === 'Bill_Type') {
             bill_type = things[0];
@@ -141,8 +141,8 @@ export default class LabelingLoader extends Component {
             },
           }
         )).json();
-        console.log(template);
-        console.log(success);
+        // console.log(template);
+        // console.log(success);
         if (!success) {
           let exportLabel = exportLabelData(labelData, project.form.formParts);
           try {

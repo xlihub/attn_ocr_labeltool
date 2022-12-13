@@ -15,7 +15,7 @@ select templates.Bill_Type, templates.Com_No, templates.Com_Name, templates.Temp
 
     return templates.map(template => ({
       ...template,
-      TemplateData : JSON.parse(template.TemplateData ),
+      TemplateData: JSON.parse(template.TemplateData),
     }));
   },
   get: (Bill_Type, Com_No, Com_Name) => {
@@ -28,28 +28,29 @@ select *
 `
       )
       .get(Bill_Type, Com_No);
-    console.log(template)
-    if (!template){
-        const new_template = db
-      .prepare(
-        `
+    if (!template) {
+      const new_template = db
+        .prepare(
+          `
 select *
   from templates
  where Bill_Type = ? and Com_Name = ?;
 `
-      )
-      .get(Bill_Type, Com_Name);
-        console.log(new_template)
-        if (!new_template){
-            return { ...new_template,  };
-        }else {
-            return { ...new_template, TemplateData : JSON.parse(new_template.TemplateData ) };
-        }
-    }else {
-        return { ...template, TemplateData : JSON.parse(template.TemplateData ) };
+        )
+        .get(Bill_Type, Com_Name);
+      if (!new_template) {
+        return { ...new_template };
+      } else {
+        return {
+          ...new_template,
+          TemplateData: JSON.parse(new_template.TemplateData),
+        };
+      }
+    } else {
+      return { ...template, TemplateData: JSON.parse(template.TemplateData) };
     }
   },
-  getImageInfo: (image) => {
+  getImageInfo: image => {
     const template = db
       .prepare(
         `
@@ -62,17 +63,14 @@ where originalName = ?;
       .get(image);
     return { ...template };
   },
-  create: (Bill_Type, Com_No, Com_Name, TemplateData , img_id) => {
-      console.log(Bill_Type);
-      console.log(Com_No);
-      console.log(Com_Name);
+  create: (Bill_Type, Com_No, Com_Name, TemplateData, img_id) => {
     const id = db
       .prepare(
         `
 insert into templates(Bill_Type, Com_No, Com_Name, TemplateData , imagesId) values (?, ?, ?, ?, ?);
 `
       )
-      .run(Bill_Type, Com_No, Com_Name, TemplateData , img_id).lastInsertRowid;
+      .run(Bill_Type, Com_No, Com_Name, TemplateData, img_id).lastInsertRowid;
 
     const template = db
       .prepare(
@@ -84,10 +82,10 @@ select * from templates where id = ?;
 
     return {
       ...template,
-      TemplateData : JSON.parse(template.TemplateData ),
+      TemplateData: JSON.parse(template.TemplateData),
     };
   },
-  update: (Bill_Type, Com_No, Com_Name, TemplateData ) => {
+  update: (Bill_Type, Com_No, Com_Name, TemplateData) => {
     if (
       !project.name ||
       project.name === '' ||

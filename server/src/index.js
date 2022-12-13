@@ -64,11 +64,17 @@ app.get('/api/templatesAll', checkLoginMiddleware, (req, res) => {
 
 app.post('/api/templates', checkLoginMiddleware, (req, res) => {
   const { bill_type, cus_no, cus_name, exportLabel, img_id } = req.body;
-  const template = templates.create(bill_type, cus_no, cus_name, exportLabel, img_id)
-  console.log(template);
+  const template = templates.create(
+    bill_type,
+    cus_no,
+    cus_name,
+    exportLabel,
+    img_id
+  );
+  // console.log(template);
   res.json({
     success: true,
-    template
+    template,
   });
 });
 
@@ -76,18 +82,18 @@ app.get('/api/templateInfo', (req, res) => {
   let { type, no, name } = req.query;
   try {
     const template = templates.get(type, no, name);
-    if( Object.keys(template).length === 0 ) {
+    if (Object.keys(template).length === 0) {
       res.json({
         success: false,
       });
-    }else {
+    } else {
       res.json({
         success: true,
-        template
+        template,
       });
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(400);
     res.json({
       message: err.message,
@@ -98,20 +104,20 @@ app.get('/api/templateInfo', (req, res) => {
 
 app.post('/api/templateInfoList', (req, res) => {
   const { img_list } = req.body;
-  let results = []
-  img_list.forEach( img => {
+  let results = [];
+  img_list.forEach(img => {
     const template = templates.getImageInfo(img);
-    let result = {}
-    if( Object.keys(template).length === 0 ) {
-      result[img] = null
-    }else {
-      result[img] = template
+    let result = {};
+    if (Object.keys(template).length === 0) {
+      result[img] = null;
+    } else {
+      result[img] = template;
     }
-    results.push(result)
-  })
+    results.push(result);
+  });
   res.json({
     success: true,
-    results: results
+    results: results,
   });
 });
 
@@ -119,18 +125,18 @@ app.delete('/api/templateInfo', checkLoginMiddleware, (req, res) => {
   let { type, no, name } = req.query;
   try {
     const template = templates.get(type, no, name);
-    if( Object.keys(template).length === 0 ) {
+    if (Object.keys(template).length === 0) {
       res.json({
         success: false,
       });
-    }else {
+    } else {
       templates.delete(template.id);
       res.json({
         success: true,
       });
     }
   } catch (err) {
-    console.log(err)
+    console.log(err);
     res.status(400);
     res.json({
       message: err.message,
