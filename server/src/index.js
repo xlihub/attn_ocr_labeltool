@@ -24,6 +24,16 @@ setup(app);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
+// 路由请求超时的中间件
+app.use(function(req, res, next) {
+  // 这里必须是Response响应的定时器【10秒】
+  res.setTimeout(10 * 1000, function() {
+    console.log('Request has timed out.');
+    return res.status(408).send('请求超时');
+  });
+  next();
+});
+
 app.get('/api/mlmodels', (req, res) => {
   res.json(mlmodels.getAll());
 });
