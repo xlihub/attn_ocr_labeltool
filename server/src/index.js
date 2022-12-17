@@ -437,4 +437,8 @@ if (process.env.NODE_ENV === 'production') {
 
 const PORT = process.env.API_PORT || process.env.PORT || 3001;
 
-app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
+const Hostname = '0.0.0.0';
+
+app.listen(PORT, Hostname, () =>
+  console.log(`Server running at ${Hostname}:${PORT}`)
+);

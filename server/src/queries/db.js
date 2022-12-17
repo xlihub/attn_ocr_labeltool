@@ -7,7 +7,7 @@ const dbPath =
   path.join(__dirname, '../../database.sqlite');
 
 const exists = fs.existsSync(dbPath);
-const db = sqlite3(dbPath, {});
+const db = sqlite3(dbPath, { timeout: 10 * 1000 });
 
 if (!exists) {
   const migrations = path.join(path.join(__dirname, '..', '..'), 'migrations');
