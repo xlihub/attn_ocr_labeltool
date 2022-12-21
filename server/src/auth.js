@@ -15,7 +15,7 @@ exports.setup = app => {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        expires: 600000*6*24,
+        expires: 600000 * 6 * 24,
       },
     })
   );
@@ -33,6 +33,7 @@ exports.checkLoginMiddleware = (req, res, next) => {
     next();
   } else {
     res.status(401).send({ message: 'unauthenticated' });
+    return;
   }
 };
 
@@ -43,5 +44,6 @@ exports.authHandler = (req, res, next) => {
     res.json({ success: true });
   } else {
     res.status(401).send({ message: 'unauthenticated' });
+    return;
   }
 };
