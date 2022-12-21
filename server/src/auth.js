@@ -33,7 +33,6 @@ exports.checkLoginMiddleware = (req, res, next) => {
     next();
   } else {
     res.status(401).send({ message: 'unauthenticated' });
-    return;
   }
 };
 
@@ -44,6 +43,5 @@ exports.authHandler = (req, res, next) => {
     res.json({ success: true });
   } else {
     res.status(401).send({ message: 'unauthenticated' });
-    return;
   }
 };
