@@ -1,4 +1,4 @@
-FROM node:10.15.2
+FROM node:14
 
 RUN apt-get -y update
 RUN apt-get -y upgrade
