@@ -28,6 +28,7 @@ select *
 `
       )
       .get(Bill_Type, Com_No);
+    // console.log(template)
     if (!template) {
       const new_template = db
         .prepare(
@@ -85,31 +86,34 @@ select * from templates where id = ?;
       TemplateData: JSON.parse(template.TemplateData),
     };
   },
-  update: (Bill_Type, Com_No, Com_Name, TemplateData) => {
-    if (
-      !project.name ||
-      project.name === '' ||
-      !Array.isArray(project.form.formParts)
-    ) {
-      throw new Error('Project must have a non-empty name and a form object.');
-    }
-    if (!id) {
-      throw new Error('Must present a valid id.');
-    }
-
+  update: (id, temp) => {
     db.prepare(
       `
-update projects
-   set name = ?, form = ?, referenceLink = ?, referenceText = ?
- where id = ?;
-`
+        update templates
+           set Bill_Type = ?, Com_No = ?, Com_Name = ?, TemplateData = ?, imagesId = ?
+         where id = ?;
+        `
     ).run(
-      project.name,
-      JSON.stringify(project.form),
-      project.referenceLink,
-      project.referenceText,
+      temp.bill_type,
+      temp.cus_no,
+      temp.cus_name,
+      temp.exportLabel,
+      temp.img_id,
       id
     );
+
+    const template = db
+      .prepare(
+        `
+select * from templates where id = ?;
+`
+      )
+      .get(id);
+
+    return {
+      ...template,
+      TemplateData: JSON.parse(template.TemplateData),
+    };
   },
   delete: id => {
     db.prepare(`delete from templates where id=?;`).run(id);

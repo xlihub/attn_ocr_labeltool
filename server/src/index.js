@@ -74,7 +74,7 @@ app.get('/api/templatesAll', checkLoginMiddleware, (req, res) => {
 
 app.post('/api/templates', checkLoginMiddleware, (req, res) => {
   const { bill_type, cus_no, cus_name, exportLabel, img_id } = req.body;
-  const template = templates.create(
+  const result = templates.create(
     bill_type,
     cus_no,
     cus_name,
@@ -84,8 +84,33 @@ app.post('/api/templates', checkLoginMiddleware, (req, res) => {
   // console.log(template);
   res.json({
     success: true,
-    template,
+    result,
   });
+});
+
+app.patch('/api/templates/:id', checkLoginMiddleware, (req, res) => {
+  const { bill_type, cus_no, cus_name, exportLabel, img_id } = req.body;
+  const temp = {
+    bill_type: bill_type,
+    cus_no: cus_no,
+    cus_name: cus_name,
+    exportLabel: exportLabel,
+    img_id: img_id,
+  };
+  try {
+    const result = templates.update(req.params.id, temp);
+    res.json({
+      success: true,
+      result,
+    });
+  } catch (err) {
+    res.status(400);
+    res.json({
+      message: err.message,
+      code: 400,
+    });
+    return;
+  }
 });
 
 app.get('/api/templateInfo', (req, res) => {

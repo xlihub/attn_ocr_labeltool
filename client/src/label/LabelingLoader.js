@@ -143,10 +143,10 @@ export default class LabelingLoader extends Component {
         )).json();
         // console.log(template);
         // console.log(success);
+        let exportLabel = exportLabelData(labelData, project.form.formParts);
         if (!success) {
-          let exportLabel = exportLabelData(labelData, project.form.formParts);
           try {
-            const { success, template } = await (await this.fetch(
+            const { success, result } = await (await this.fetch(
               '/api/templates',
               {
                 method: 'POST',
@@ -166,15 +166,52 @@ export default class LabelingLoader extends Component {
             if (success) {
               alert(
                 '單據類型:' +
-                  template.Bill_Type +
+                  result.Bill_Type +
                   '\n' +
                   '公司統編:' +
-                  template.Com_No +
+                  result.Com_No +
                   '\n' +
                   '公司名稱:' +
-                  template.Com_Name +
+                  result.Com_Name +
                   '\n' +
                   '添加成功!'
+              );
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          try {
+            const tid = template.id;
+            const { success, result } = await (await this.fetch(
+              '/api/templates/' + tid,
+              {
+                method: 'PATCH',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  bill_type,
+                  cus_no,
+                  cus_name,
+                  exportLabel,
+                  img_id,
+                }),
+              }
+            )).json();
+            if (success) {
+              alert(
+                '單據類型:' +
+                  result.Bill_Type +
+                  '\n' +
+                  '公司統編:' +
+                  result.Com_No +
+                  '\n' +
+                  '公司名稱:' +
+                  result.Com_Name +
+                  '\n' +
+                  '更新成功!'
               );
             }
           } catch (error) {
